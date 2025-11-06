@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>My Movie List</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { font-family: system-ui, Arial; max-width:800px; margin:2rem auto; padding:0 1rem; }
+    header { display:flex; justify-content:space-between; align-items:center; }
+    ul { padding-left:1.2rem; }
+    .movie { margin:0.5rem 0; padding:0.5rem; border-radius:6px; box-shadow:0 0 0 1px rgba(0,0,0,0.05); }
+    form { margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap; }
+    input, button { padding:0.5rem; font-size:1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Movie List</h1>
+    <small id="count">0 movies</small>
+  </header>
+
+  <ul id="list"></ul>
+
+  <details>
+    <summary>Add movie (local only)</summary>
+    <form id="addForm">
+      <input id="title" placeholder="Title" required>
+      <input id="year" placeholder="Year" style="width:6rem">
+      <input id="notes" placeholder="Notes (optional)">
+      <button type="submit">Add (local)</button>
+    </form>
+    <p style="font-size:0.9rem; color:#555;">
+      To make permanent: edit <code>movies.json</code> in the repo (GitHub → Edit file → Commit).
+    </p>
+  </details>
+
+  <script>
+    const listEl = document.getElementById('list');
+    const countEl = document.getElementById('count');
+
+    async function loadMovies(){
+      try {
+        const r = await fetch('movies.json', {cache: "no-store"});
+        if(!r.ok) throw new Error('Could not fetch movies.json');
+        const movies = await r.json();
+        render(movies);
+        window.movies = movies; // keep in memory
+      } catch(err) {
+        listEl.innerHTML = '<li style="color:red">Failed to load movies.json — check file exists in repository root.</li>';
+        console.error(err);
+      }
+    }
+
+    function render(movies){
+      countEl.textContent = movies.length + (movies.length===1 ? ' movie' : ' movies');
+      listEl.innerHTML = movies.map(m => `
+        <li class="movie">
+          <strong>${escapeHtml(m.title)}</strong>
+          ${m.year ? ' — ' + escapeHtml(m.year) : ''}
+          ${m.notes ? '<div style="font-size:0.9rem;color:#444">'+escapeHtml(m.notes)+'</div>' : ''}
+        </li>`).join('');
+    }
+
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    document.getElementById('addForm').addEventListener('submit', e=>{
+      e.preventDefault();
+      const t = document.getElementById('title').value.trim();
+      const y = document.getElementById('year').value.trim();
+      const n = document.getElementById('notes').value.trim();
+      if(!t) return;
+      const movie = {title: t, year: y, notes: n};
+      window.movies = window.movies || [];
+      window.movies.unshift(movie); // add on top
+      render(window.movies);
+      e.target.reset();
+      // Note: This change is local only (in browser). To save permanently, edit movies.json in GitHub.
+    });
+
+    loadMovies();
+  </script>
+</body>
+</html>
