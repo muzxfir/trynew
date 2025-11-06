@@ -1,4 +1,4 @@
-const apiKey = "YOUR_TMDB_API_KEY";
+const apiKey = "d2f23cc2f09bb217e31713f59d37676d";
 const imageBase = "https://image.tmdb.org/t/p/w200";
 const movieRow = document.querySelector(".movie-row");
 const searchInput = document.getElementById("search");
