@@ -1,3 +1,4 @@
+/* Basic Body & Header */
 body {
   background-color: #141414;
   color: white;
@@ -26,10 +27,16 @@ header input {
   font-size: 1em;
 }
 
-.movie-category {
+/* Category Section */
+.category {
   padding: 20px;
 }
 
+.category h2 {
+  margin-bottom: 10px;
+}
+
+/* Movie Row & Card */
 .movie-row {
   display: flex;
   overflow-x: auto;
@@ -42,6 +49,7 @@ header input {
   border-radius: 5px;
   overflow: hidden;
   cursor: pointer;
+  position: relative;
   transition: transform 0.2s;
 }
 
@@ -54,8 +62,19 @@ header input {
   display: block;
 }
 
-.movie-card p {
+/* Hover Overlay */
+.movie-info {
+  position: absolute;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  width: 100%;
   padding: 5px;
   text-align: center;
-  font-size: 0.9em;
+  font-size: 0.85em;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.movie-card:hover .movie-info {
+  opacity: 1;
 }
