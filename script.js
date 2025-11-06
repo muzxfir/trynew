@@ -32,6 +32,23 @@ function setHero(movie) {
   heroSection.style.backgroundImage = `url(${imageBase + movie.backdrop_path})`;
 }
 
+// Function to create a clickable movie card
+function createMovieCard(movie) {
+  const card = document.createElement("div");
+  card.className = "movie-card";
+  card.innerHTML = `
+    <img src="${movie.poster_path ? imageBase + movie.poster_path : 'https://via.placeholder.com/150x225?text=No+Image'}" alt="${movie.title}">
+    <div class="movie-info">
+      ${movie.title} (${movie.vote_average.toFixed(1)})
+    </div>
+  `;
+  // Click event to open details page
+  card.addEventListener("click", () => {
+    window.location.href = `movie.html?id=${movie.id}`;
+  });
+  return card;
+}
+
 // Display categories with movies
 async function displayCategories() {
   categoriesContainer.innerHTML = "";
@@ -49,14 +66,7 @@ async function displayCategories() {
     const row = section.querySelector(".movie-row");
 
     movies.forEach(movie => {
-      const card = document.createElement("div");
-      card.className = "movie-card";
-      card.innerHTML = `
-        <img src="${movie.poster_path ? imageBase + movie.poster_path : 'https://via.placeholder.com/150x225?text=No+Image'}" alt="${movie.title}">
-        <div class="movie-info">
-          ${movie.title} (${movie.vote_average.toFixed(1)})
-        </div>
-      `;
+      const card = createMovieCard(movie);
       row.appendChild(card);
     });
 
@@ -77,14 +87,7 @@ searchInput.addEventListener("input", async (e) => {
   const row = categoriesContainer.querySelector(".movie-row");
 
   data.results.forEach(movie => {
-    const card = document.createElement("div");
-    card.className = "movie-card";
-    card.innerHTML = `
-      <img src="${movie.poster_path ? imageBase + movie.poster_path : 'https://via.placeholder.com/150x225?text=No+Image'}" alt="${movie.title}">
-      <div class="movie-info">
-        ${movie.title} (${movie.vote_average.toFixed(1)})
-      </div>
-    `;
+    const card = createMovieCard(movie);
     row.appendChild(card);
   });
 });
